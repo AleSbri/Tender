@@ -22,7 +22,7 @@ bool login(PGconn *conn , User user){
     const char *paramValues[2];
     paramValues[0]=user->username;
     paramValues[1]=user->password;
-    char *query= "SELECT * FROM utente WHERE username=$1 AND password=$2";
+    char *query= "SELECT * FROM \"USER\" WHERE username=$1 AND password=$2";
     PGresult *res = PQexecParams(conn,query,2,NULL,paramValues,NULL,NULL,0);
     if (PQntuples(res) == 0) {
         printf("username o password sbagliati\n");
@@ -44,7 +44,7 @@ bool registration(PGconn *conn , User user){
     paramValues[0]=user->username;
     paramValues[1]=user->password;
 
-    char *query= "INSERT INTO utente (username,password,portafoglio) VALUES ($1,$2,0)";
+    char *query= "INSERT INTO \"USER\" (username,password,portafoglio) VALUES ($1,$2,0)";
 
     PGresult *res = PQexecParams(conn,query,2,NULL,paramValues,NULL,NULL,0);
 
@@ -65,7 +65,7 @@ User getUser(PGconn *conn ,char *username){//potrebbe non servire se si salva tu
     conn = connect_db();
     const char *paramValues[1];
     paramValues[0]=username;
-    char *query ="SELECT * FROM utente WHERE username = $1";
+    char *query ="SELECT * FROM \"USER\" WHERE username = $1";
     PGresult *res = PQexecParams(conn,query,1,NULL,paramValues,NULL,NULL,0);
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -87,7 +87,7 @@ void addPortafoglio(PGconn *conn,char *username,char *portafoglio){
     const char *paramValues[2];
     paramValues[0]=portafoglio;
     paramValues[1]=username;
-    char *query ="UPDATE utente SET portafoglio = portafoglio + $1 WHERE username = $2";
+    char *query ="UPDATE \"USER\" SET portafoglio = portafoglio + $1 WHERE username = $2";
     PGresult *res = PQexecParams(conn,query,2,NULL,paramValues,NULL,NULL,0);
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -106,7 +106,7 @@ bool substractPortafoglio(PGconn *conn,char *username,char *portafoglio){
     const char *paramValues[2];
     paramValues[0]=portafoglio;
     paramValues[1]=username;
-    char *query ="UPDATE utente SET portafoglio = portafoglio - $1 WHERE username = $2";
+    char *query ="UPDATE \"USER\" SET portafoglio = portafoglio - $1 WHERE username = $2";
     PGresult *res = PQexecParams(conn,query,2,NULL,paramValues,NULL,NULL,0);
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -124,7 +124,7 @@ bool substractPortafoglio(PGconn *conn,char *username,char *portafoglio){
 
 DrinkList getDrink (PGconn *conn){
     conn = connect_db();
-    char *query ="SELECT * FROM tender.drink";
+    char *query ="SELECT * FROM \"Drink\"";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -150,13 +150,14 @@ DrinkList getDrink (PGconn *conn){
 }
 
 DrinkList getDrinksCocktail (PGconn *conn){
+    int status;
     conn = connect_db();
-    char *query ="SELECT * FROM drink WHERE frullato = false";
+    char *query ="SELECT * FROM \"Drink\" WHERE frullato = false";
     PGresult *res = PQexec(conn,query);
 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-
-        printf("errore database\n");
+    status = PQresultStatus(res);
+    else if (status != PGRES_TUPLES_OK) {
+        printf("non sono stati trovati drink nel database\n");
         PQclear(res);
         PQfinish(conn);
         return NULL;
@@ -179,12 +180,12 @@ DrinkList getDrinksCocktail (PGconn *conn){
 
 DrinkList getDrinksFrullato (PGconn *conn){
     conn = connect_db();
-    char *query ="SELECT * FROM drink WHERE frullato = true";
+    char *query ="SELECT * FROM \"Drink\" WHERE frullato = true";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 
-        printf("errore database\n");
+        printf("Non sono stati trovati frullati nel database\n");
         PQclear(res);
         PQfinish(conn);
         return NULL;
@@ -213,18 +214,18 @@ void buyListDrink(PGconn *conn,DrinkList list){
 
         const char *paramValues[1];
         paramValues[0]=tmp->drink->nome_drink;
-        char *query ="UPDATE drink SET vendite = vendite + 1 WHERE nome_drink = $1";
+        char *query ="UPDATE \"Drink\" SET vendite = vendite + 1 WHERE nome_drink = $1";
         PGresult *res = PQexecParams(conn,query,1,NULL,paramValues,NULL,NULL,0);
 
         if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-            printf("errore database\n");
+            printf("errore nell'esecuzione del comando %s\n",query);
             PQclear(res);
             PQfinish(conn);
         }
         tmp = tmp ->next;
         PQclear(res);
     }
-    printf("aggiornate vendite ");
+    printf("aggiornate vendite con successo");
     PQfinish(conn);
 }
 
@@ -233,10 +234,10 @@ void buyDrinkFromName(PGconn *conn,char *nome_drink){
     conn = connect_db();
     const char *paramValues[1];
     paramValues[0]=nome_drink;
-    char *query ="UPDATE drink SET vendite = vendite + 1 WHERE nome_drink = $1";
+    char *query ="UPDATE \"Drink\" SET vendite = vendite + 1 WHERE nome_drink = $1";
     PGresult *res = PQexecParams(conn,query,1,NULL,paramValues,NULL,NULL,0);
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-        printf("errore database\n");
+        printf("errore nell'esecuzione del comando %s\n",query);
         PQclear(res);
         PQfinish(conn);
     }
@@ -250,7 +251,7 @@ IngredientList getIngredient(PGconn *conn,char *nome_drink){
     conn = connect_db();
     const char *paramValues[0];
     paramValues[0]=nome_drink;
-    char *query ="SELECT * FROM ingredient WHERE nome_drink = $1";
+    char *query ="SELECT * FROM \"Ingredient\" WHERE nome_drink = $1";
     PGresult *res = PQexecParams(conn,query,1,NULL,paramValues,NULL,NULL,0);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -281,11 +282,11 @@ IngredientList getIngredientFromDrinksList(PGconn *conn,DrinkList drinks){
 
         const char *paramValues[0];
         paramValues[0]=tmp->drink->nome_drink;
-        char *query ="SELECT * FROM ingredient WHERE nome_drink=$1";
+        char *query ="SELECT * FROM \"Ingredient\" WHERE nome_drink=$1";
         PGresult *res = PQexecParams(conn,query,1,NULL,paramValues,NULL,NULL,0);
 
         if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-            printf("errore database\n");
+            printf("Non sono presenti Ingredienti collegati a Drink\n");
             PQclear(res);
             PQfinish(conn);
         }
