@@ -6,7 +6,7 @@
 
 
 PGconn* connect_db(){
-    PGconn *conn = PQconnectdb("user=alex password=napoli dbname=tenderdb");
+    PGconn *conn = PQconnectdb("user=alesilv password=Progetto2023 dbname=tenderdb");
         if (PQstatus(conn) == CONNECTION_BAD) {
 
         fprintf(stderr, "Connection to database failed: %s\n",
@@ -124,7 +124,7 @@ bool substractPortafoglio(PGconn *conn,char *username,char *portafoglio){
 
 DrinkList getDrink (PGconn *conn){
     conn = connect_db();
-    char *query ="SELECT * FROM tender.drink";
+    char *query ="SELECT * FROM drink order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -141,7 +141,7 @@ DrinkList getDrink (PGconn *conn){
             PQgetvalue(res, i, 1),
             atoi(PQgetvalue(res, i, 2)),
             atof(PQgetvalue(res, i, 3)),
-            PQgetvalue(res, i, 4)));
+            atoi(PQgetvalue(res, i, 4))));
     }
 
     PQclear(res);
