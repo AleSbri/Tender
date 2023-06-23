@@ -90,20 +90,3 @@ void serializzaIngredientList(IngredientList list,char *result){
         serializzaIngredientList(list->next,result);
     }
 }
-
-
-void printDrink(Drink drink) {
-    if(drink == NULL) return;
-    printf("%s | ",drink->nome_drink);
-    printf("%s | ",drink->descrizione);
-    printf("%d | ",drink->frullato);
-    printf("%lf | ",drink->costo);
-    printf("%d | ",drink->vendite);
-
-}
-
-void printDrinkList(DrinkList drinkList) {
-    if(drinkList == NULL) return;
-    printDrink(drinkList->drink);
-    printDrinkList(drinkList->next);
-}

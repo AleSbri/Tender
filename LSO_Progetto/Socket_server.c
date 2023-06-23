@@ -150,9 +150,12 @@ void registrazioneUtente(int socket){
     void inviaListaDrink(int socket){
         PGconn *conn;
         DrinkList list = getDrink(conn);
-        if(list == NULL)
-          if(send(socket,"errore database",strlen("errore database"),0) < 0) perror("invio non riuscito");
-
+        if(list == NULL) {
+            if(send(socket,"errore database",strlen("errore database"),0) < 0) 
+                perror("invio non riuscito");
+            return;
+        }
+        IngredientList  ingredients = getIngredientFromDrinksList(conn,list);
         char result[BUFSIZ] ={""};
         serializzaDrinkList(list,result);
         strcat(result,"\n");
@@ -160,12 +163,14 @@ void registrazioneUtente(int socket){
         char richiestaIngredienti[BUFSIZ] = {""};
         leggiRichiesta(socket,richiestaIngredienti);
         if(strcmp(richiestaIngredienti,"ingredienti")==0){
-            IngredientList ingredients = getIngredientFromDrinksList(conn,list);
+            
             if(ingredients == NULL) if(send(socket,"errore database",strlen("errore database"),0) < 0) perror("invio non riuscito");
             char serializeIngredients[BUFSIZ] = {""};
             serializzaIngredientList(ingredients,serializeIngredients);
             if(send(socket,serializeIngredients,strlen(serializeIngredients),0) < 0) perror("invio non riuscito");
         }
+        deallocaLista(list);
+        deallocaListaIngredient(ingredients)
     }
 //*************************************************
 
@@ -177,16 +182,23 @@ void registrazioneUtente(int socket){
         char result[BUFSIZ] ={""};
         serializzaDrinkList(list,result);
         strcat(result,"\n");
-        if(send(socket,result,strlen(result),0) < 0) perror("invio non riuscito");
+        if(list == NULL) {
+            if(send(socket,"errore database",strlen("errore database"),0) < 0) 
+                perror("invio non riuscito");
+            return;
+        }
+
+        IngredientList ingredients = getIngredientFromDrinksList(conn,list);
 
         char richiestaIngredienti[BUFSIZ] = {""};
         leggiRichiesta(socket,richiestaIngredienti);
         if(strcmp(richiestaIngredienti,"ingredienti")==0){
-            IngredientList ingredients = getIngredientFromDrinksList(conn,list);
             char serializeIngredients[BUFSIZ] = {""};
             serializzaIngredientList(ingredients,serializeIngredients);
             if(send(socket,serializeIngredients,strlen(serializeIngredients),0) < 0) perror("invio non riuscito");
         }
+        deallocaLista(list);
+        deallocaListaIngredient(ingredients);
     }
 //**************************************************
 
@@ -198,16 +210,23 @@ void registrazioneUtente(int socket){
         char result[BUFSIZ] ={""};
         serializzaDrinkList(list,result);
         strcat(result,"\n");
-        if(send(socket,result,strlen(result),0) < 0) perror("invio non riuscito");
-
+        if(list == NULL) {
+            if(send(socket,"errore database",strlen("errore database"),0) < 0) 
+                perror("invio non riuscito");
+            return;
+        }
+        IngredientList ingredients = getIngredientFromDrinksList(conn,list);
         char richiestaIngredienti[BUFSIZ] = {""};
         leggiRichiesta(socket,richiestaIngredienti);
         if(strcmp(richiestaIngredienti,"ingredienti")==0){
-            IngredientList ingredients = getIngredientFromDrinksList(conn,list);
+            
             char serializeIngredients[BUFSIZ] = {""};
             serializzaIngredientList(ingredients,serializeIngredients);
             if(send(socket,serializeIngredients,strlen(serializeIngredients),0) < 0) perror("invio non riuscito");
         }
+        
+        deallocaLista(list);
+        deallocaListaIngredient(ingredients);
     }
 //**************************************************
 

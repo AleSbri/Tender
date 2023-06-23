@@ -7,6 +7,7 @@ PGconn* connect_db(){
         fprintf(stderr, "Connection to database failed: %s\n",
             PQerrorMessage(conn));
         PQfinish(conn);
+        return NULL;
     }
     printf("connesso al databse\n");
     return conn;
@@ -14,6 +15,7 @@ PGconn* connect_db(){
 
 bool login(PGconn *conn , User user){
     conn = connect_db();
+    if(!checkConnection(conn)) return false;
     const char *paramValues[2];
     paramValues[0]=user->username;
     paramValues[1]=user->password;
@@ -35,6 +37,7 @@ bool login(PGconn *conn , User user){
 
 bool registration(PGconn *conn , User user){
     conn = connect_db();
+    if(!checkConnection(conn)) return false;
     const char *paramValues[2];
     paramValues[0]=user->username;
     paramValues[1]=user->password;
@@ -58,6 +61,7 @@ bool registration(PGconn *conn , User user){
 
 void addPortafoglio(PGconn *conn,char *username,char *portafoglio){
     conn = connect_db();
+    if(!checkConnection(conn)) return;
     const char *paramValues[2];
     paramValues[0]=portafoglio;
     paramValues[1]=username;
@@ -77,6 +81,7 @@ void addPortafoglio(PGconn *conn,char *username,char *portafoglio){
 
 bool substractPortafoglio(PGconn *conn,char *username,char *portafoglio){
     conn = connect_db();
+    if(!checkConnection(conn)) return false;
     const char *paramValues[2];
     paramValues[0]=portafoglio;
     paramValues[1]=username;
@@ -98,6 +103,7 @@ bool substractPortafoglio(PGconn *conn,char *username,char *portafoglio){
 
 DrinkList getDrink (PGconn *conn){
     conn = connect_db();
+    if(!checkConnection(conn)) return NULL;
     char *query ="SELECT * FROM drink order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
@@ -125,6 +131,7 @@ DrinkList getDrink (PGconn *conn){
 
 DrinkList getDrinksCocktail (PGconn *conn){
     conn = connect_db();
+    if(!checkConnection(conn)) return NULL;
     char *query ="SELECT * FROM drink WHERE frullato = 0 order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
@@ -153,6 +160,7 @@ DrinkList getDrinksCocktail (PGconn *conn){
 
 DrinkList getDrinksFrullato (PGconn *conn){
     conn = connect_db();
+    if(!checkConnection(conn)) return NULL;
     char *query ="SELECT * FROM drink WHERE frullato = 1 order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
@@ -181,6 +189,7 @@ DrinkList getDrinksFrullato (PGconn *conn){
 
 void buyListDrink(PGconn *conn,DrinkList list){
     conn = connect_db();
+    if(!checkConnection(conn)) return;
     DrinkList tmp = list;
     int len = lenDrinkList(tmp);
     for (int i = 0 ; i < len ; i++){
@@ -205,6 +214,7 @@ void buyListDrink(PGconn *conn,DrinkList list){
 
 void buyDrinkFromName(PGconn *conn,char *nome_drink){
     conn = connect_db();
+    if(!checkConnection(conn)) return;
     const char *paramValues[1];
     paramValues[0]=nome_drink;
     char *query ="UPDATE drink SET vendite = vendite + 1 WHERE nome = $1";
@@ -222,6 +232,7 @@ void buyDrinkFromName(PGconn *conn,char *nome_drink){
 
 IngredientList getIngredient(PGconn *conn,char *nome_drink){
     conn = connect_db();
+    if(!checkConnection(conn)) return NULL;
     const char *paramValues[0];
     paramValues[0]=nome_drink;
     char *query ="SELECT * FROM ingredient WHERE nome_drink = $1";
@@ -248,6 +259,7 @@ IngredientList getIngredient(PGconn *conn,char *nome_drink){
 
 IngredientList getIngredientFromDrinksList(PGconn *conn,DrinkList drinks){
     conn = connect_db();
+    if(!checkConnection(conn)) return NULL;
     IngredientList ingredients = NULL;
     DrinkList tmp = drinks;
     int len = lenDrinkList(tmp);
@@ -273,4 +285,12 @@ IngredientList getIngredientFromDrinksList(PGconn *conn,DrinkList drinks){
     }
     PQfinish(conn);
     return ingredients;
+}
+
+bool checkConnection(PGconn *conn) {
+    if(conn==NULL) {
+        printf("Errore nella connessione al database\n");
+        return false
+    }
+    return true;
 }
