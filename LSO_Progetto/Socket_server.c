@@ -186,6 +186,7 @@ void registrazioneUtente(int socket){
         char result[BUFSIZ] ={""};
         serializzaDrinkList(list,result);
         strcat(result,"\n");
+	if(send(socket,result,strlen(result),0) < 0) perror("invio non riuscito");
         IngredientList ingredients = getIngredientFromDrinksList(conn,list);
 
         char richiestaIngredienti[BUFSIZ] = {""};
@@ -212,7 +213,7 @@ void registrazioneUtente(int socket){
         char result[BUFSIZ] ={""};
         serializzaDrinkList(list,result);
         strcat(result,"\n");
-        
+        if(send(socket,result,strlen(result),0) < 0) perror("invio non riuscito");
         IngredientList ingredients = getIngredientFromDrinksList(conn,list);
         char richiestaIngredienti[BUFSIZ] = {""};
         leggiRichiesta(socket,richiestaIngredienti);
