@@ -124,7 +124,7 @@ bool substractPortafoglio(PGconn *conn,char *username,char *portafoglio){
 
 DrinkList getDrink (PGconn *conn){
     conn = connect_db();
-    char *query ="SELECT * FROM tender.drink";
+    char *query ="SELECT * FROM drink order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -151,7 +151,7 @@ DrinkList getDrink (PGconn *conn){
 
 DrinkList getDrinksCocktail (PGconn *conn){
     conn = connect_db();
-    char *query ="SELECT * FROM drink WHERE frullato = 0";
+    char *query ="SELECT * FROM drink WHERE frullato = 0 order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -179,7 +179,7 @@ DrinkList getDrinksCocktail (PGconn *conn){
 
 DrinkList getDrinksFrullato (PGconn *conn){
     conn = connect_db();
-    char *query ="SELECT * FROM drink WHERE frullato = 1";
+    char *query ="SELECT * FROM drink WHERE frullato = 1 order by vendite desc";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
