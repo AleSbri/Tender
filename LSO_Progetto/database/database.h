@@ -3,6 +3,7 @@
 #include "../lib/struct/User.h"
 #include "libpq-fe.h"
 
+bool checkConnection(PGconn *conn);
 PGconn* connect_db();
 bool login(PGconn *conn , User user);
 bool registration(PGconn *conn , User user);

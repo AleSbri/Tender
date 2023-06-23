@@ -132,7 +132,7 @@ DrinkList getDrink (PGconn *conn){
 DrinkList getDrinksCocktail (PGconn *conn){
     conn = connect_db();
     if(!checkConnection(conn)) return NULL;
-    char *query ="SELECT * FROM drink WHERE frullato = 0 order by vendite desc";
+    char *query ="SELECT * FROM drink WHERE frullato = 0";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
@@ -161,7 +161,7 @@ DrinkList getDrinksCocktail (PGconn *conn){
 DrinkList getDrinksFrullato (PGconn *conn){
     conn = connect_db();
     if(!checkConnection(conn)) return NULL;
-    char *query ="SELECT * FROM drink WHERE frullato = 1 order by vendite desc";
+    char *query ="SELECT * FROM drink WHERE frullato = 1";
     PGresult *res = PQexec(conn,query);
 
     if (PQresultStatus(res) != PGRES_TUPLES_OK) {

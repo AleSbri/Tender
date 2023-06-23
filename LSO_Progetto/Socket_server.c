@@ -170,7 +170,7 @@ void registrazioneUtente(int socket){
             if(send(socket,serializeIngredients,strlen(serializeIngredients),0) < 0) perror("invio non riuscito");
         }
         deallocaLista(list);
-        deallocaListaIngredient(ingredients)
+        deallocaListaIngredient(ingredients);
     }
 //*************************************************
 
