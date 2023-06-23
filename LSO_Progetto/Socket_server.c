@@ -1,5 +1,5 @@
 #include "lib/com/socket_server_lib.h"
-#include <netdb.h>
+
 int main(int argc, char const *argv[])
 {
     char buffer[BUFSIZ];
@@ -39,13 +39,6 @@ int init_server() {
         perror("binding socket non riuscita");
         return EXIT_FAILURE;
     }
-	char host[256];
-	gethostname(host,256);
-	printf("%s",host);
-	struct hostent *hostinfo;
-	hostinfo = gethostbyname(host);
-	char *ip = inet_ntoa(*(struct in_addr*)hostinfo->h_addr);
-	printf("%s",ip);
     listen(server_fd,5);
     return server_fd;
 }

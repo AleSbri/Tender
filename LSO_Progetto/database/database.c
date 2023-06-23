@@ -1,9 +1,4 @@
 #include "database.h"
-//#include "../dependencies.h"
-//#include "../lib/struct/Drink.h"
-//#include "../lib/struct/User.h"
-//#include <libpq-fe>
-
 
 PGconn* connect_db(){
     PGconn *conn = PQconnectdb("user=alesilv password=Progetto2023 dbname=tenderdb");
@@ -59,27 +54,6 @@ bool registration(PGconn *conn , User user){
     PQclear(res);
     PQfinish(conn);
     return true;
-}
-
-User getUser(PGconn *conn ,char *username){//potrebbe non servire se si salva tutto in android durante il login
-    conn = connect_db();
-    const char *paramValues[1];
-    paramValues[0]=username;
-    char *query ="SELECT * FROM utente WHERE username = $1";
-    PGresult *res = PQexecParams(conn,query,1,NULL,paramValues,NULL,NULL,0);
-
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-
-        printf("Utente non esistente\n");
-        PQclear(res);
-        PQfinish(conn);
-        return NULL;
-    }
-    printf("Utente %s trovato",username);
-    User user = creaUserFromDB(PQgetvalue(res,0,0),PQgetvalue(res,0,1),atof(PQgetvalue(res,0,2)));
-    PQclear(res);
-    PQfinish(conn);
-    return user;
 }
 
 void addPortafoglio(PGconn *conn,char *username,char *portafoglio){
