@@ -290,7 +290,7 @@ IngredientList getIngredientFromDrinksList(PGconn *conn,DrinkList drinks){
 bool checkConnection(PGconn *conn) {
     if(conn==NULL) {
         printf("Errore nella connessione al database\n");
-        return false
+        return false;
     }
     return true;
 }
