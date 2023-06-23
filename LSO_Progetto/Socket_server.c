@@ -178,16 +178,14 @@ void registrazioneUtente(int socket){
     void inviaListaDrinkCocktail(int socket){
         PGconn *conn;
         DrinkList list = getDrinksCocktail(conn);
-
-        char result[BUFSIZ] ={""};
-        serializzaDrinkList(list,result);
-        strcat(result,"\n");
-        if(list == NULL) {
+	if(list == NULL) {
             if(send(socket,"errore database",strlen("errore database"),0) < 0) 
                 perror("invio non riuscito");
             return;
         }
-
+        char result[BUFSIZ] ={""};
+        serializzaDrinkList(list,result);
+        strcat(result,"\n");
         IngredientList ingredients = getIngredientFromDrinksList(conn,list);
 
         char richiestaIngredienti[BUFSIZ] = {""};
@@ -206,15 +204,15 @@ void registrazioneUtente(int socket){
     void inviaListaDrinkFrullato(int socket){
         PGconn *conn;
         DrinkList list = getDrinksFrullato(conn);
-
-        char result[BUFSIZ] ={""};
-        serializzaDrinkList(list,result);
-        strcat(result,"\n");
-        if(list == NULL) {
+	if(list == NULL) {
             if(send(socket,"errore database",strlen("errore database"),0) < 0) 
                 perror("invio non riuscito");
             return;
         }
+        char result[BUFSIZ] ={""};
+        serializzaDrinkList(list,result);
+        strcat(result,"\n");
+        
         IngredientList ingredients = getIngredientFromDrinksList(conn,list);
         char richiestaIngredienti[BUFSIZ] = {""};
         leggiRichiesta(socket,richiestaIngredienti);
