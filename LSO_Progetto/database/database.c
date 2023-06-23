@@ -197,7 +197,7 @@ DrinkList getDrinksFrullato (PGconn *conn){
           PQgetvalue(res, i, 1),
           atoi(PQgetvalue(res, i, 2)),
           atof(PQgetvalue(res, i, 3)),
-          PQgetvalue(res, i, 4)));
+          atoi(PQgetvalue(res, i, 4))));
     }
 
     PQclear(res);
