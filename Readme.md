@@ -11,7 +11,7 @@
 4. attivazione servizio postgresql:  
     `$sudo service postgresql start`
 
-I dati presenti nel database sono nei file di dump allegato:   
+I dati presenti nel database sono nel file di dump allegato:   
     `LSO_Progetto/database/dump_file.sql`
 
 # guida inizializzazione database dal file dump:  
